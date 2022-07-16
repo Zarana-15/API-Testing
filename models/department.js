@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const department = new mongoose.Schema({
-    did:{
+    deptId:{
         required: true,
         type: String
     },
     
-    oid:{
+    orgId:{
         required: true,
         type: String
     },

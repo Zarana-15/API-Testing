@@ -1,15 +1,15 @@
 const router = require("express").Router();
 const OrgController = require('../controllers/organisationsController'); 
 
-router.post("/neworganisation", OrgController.newOrg);
+router.post("/neworg", OrgController.newOrg);
 
-router.get("/getorganisations", OrgController.getOrg);
-
-router.patch("/editorganisation/:orgid", OrgController.editOrg);
+router.get("/getorgs", OrgController.getOrg);
 
 router.get("/getorg/oid/:orgid", OrgController.getOrgByOid);
 
 router.get("/getorg/oname/:orgname", OrgController.getOrgByOrgName);
+
+router.patch("/editorg/:orgid", OrgController.editOrg);
 
 router.delete("/removeorg/:orgid", OrgController.removeOrg);
 

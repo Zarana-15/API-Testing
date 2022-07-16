@@ -1,43 +1,48 @@
 const Employee = require("../models/employee");
+const Department = require("../models/department");
+const Organisation = require("../models/organisation");
 
 const newEmp = async(req, res)=>{
-    const eid = req.body.eid;
+    const empId = req.body.empId;
     const name = req.body.name;
-    const oid = req.body.oid;
-    const oname = req.body.oname;
-    const did = req.body.did;
-    
+    const age = req.body.age;
+    const email = req.body.email;
+    const orgId = req.body.orgId;
+    const deptId = req.body.deptId;
+    const joiningDate = req.body.joiningDate;
     const newEmployee = new Employee({
-        eid:eid,
+        empId:empId,
         name:name,
-        oid:oid,
-        oname:oname,
-        did:did
+        age:age,
+        email:email,
+        orgId:orgId,
+        deptId:deptId,
+        joiningDate:joiningDate
     });
     const savedEmployee = await newEmployee.save();
     res.json(savedEmployee);
 };
 
 const getEmp = async(req, res)=>{
-    const employees = await Employee.find({});
+    const employees = await Employee.find({}).sort({empId:1});
     res.json(employees);
 };
 
 const getEmpByEid = async(req,res)=>{
-    const emp_id = req.params.empid;
-    const employee = await Employee.find({emp_id: emp_id});
+    const empId = req.params.empid;
+    const employee = await Employee.find({empId: empId}).sort({empId:1});
     res.json(employee);
 };
 
 const getEmpByDid = async(req,res)=>{
-    const dept_id = req.params.deptid;
-    const employee = await Employee.find({dept_id: dept_id});
+    const deptId = req.params.deptid;
+    const employee = await Employee.find({deptId: deptId}).sort({empId:1});
     res.json(employee);
 };
 
 const getEmpByOid = async(req,res)=>{
-    const org_id = req.params.orgid;
-    const employee = await Employee.find({org_id: org_id});
+    const orgId = req.params.orgid;
+    const employee = await Employee.find({orgId: orgId}).sort({empId:1});
     res.json(employee);
 };
 
@@ -48,8 +53,8 @@ const editEmp = async(req,res)=>{
 };
 
 const removeEmp = async(req,res)=>{
-    const _id = req.params.empid;
-    const employee = await Employee.findByIdAndDelete(_id);
+    const empId = req.params.empid;
+    const employee = await Employee.deleteOne({empId:empId});
     res.json("Status: Deleted");
 };
 

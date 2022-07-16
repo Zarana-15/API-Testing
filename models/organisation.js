@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const organisation = new mongoose.Schema({
-    oid:{
+    orgId:{
         required: true,
         type: String
     },

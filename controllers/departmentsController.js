@@ -1,17 +1,22 @@
 const Department = require("../models/department");
+const Employee = require("../models/employee");  //To delete employees when department is deleted
+const Organisation = require("../models/organisation");
 
 const newDept = async(req, res)=>{
-    const did = req.body.did;
+    const deptId = req.body.deptId;
     const dname = req.body.dname;
-    const oid = req.body.oid;
-    
+    const orgId = req.body.orgId;
     const newDepartment = new Department({
-        did:did,
+        deptId:deptId,
         dname:dname,
-        oid:oid,
+        orgId:orgId,
     });
+     
     const savedDepartment = await newDepartment.save();
     res.json(savedDepartment);
+
+    const organisation = await Organisation.updateOne({orgId:orgId},{ $push: { dept: deptId } });
+    
 };
 
 const getDept = async(req, res)=>{
@@ -20,27 +25,34 @@ const getDept = async(req, res)=>{
 };
 
 const getDeptByDid = async(req,res)=>{
-    const dept_id = req.params.deptid;
-    const department = await Department.find({did: dept_id});
+    const deptId = req.params.deptid;
+    const department = await Department.find({deptId: deptId});
     res.json(department);
 };
 
 const getDeptByOid =  async(req,res)=>{
-    const org_id = req.params.orgid;
-    const department = await Department.find({oid: org_id});
+    const orgId = req.params.orgid;
+    const department = await Department.find({oid: orgId});
     res.json(department);
 };
 
 const editDept = async(req,res)=>{
     const _id = req.params.deptid;
-    const update = await Department.findByIdAndUpdate(_id, {$set:{oid:req.body.oid, dname: req.body.dname, did: req.body.did}});
+    const update = await Department.findByIdAndUpdate(_id, {$set:{oid:req.body.oid, dname: req.body.dname, deptId: req.body.deptId}});
     res.json("Status: Updated");
 };
 
 const removeDept = async(req,res)=>{
-    const _id = req.params.deptid;
-    const department = await Department.findByIdAndDelete(_id);
-    res.json("Status: Deleted");
+    const deptId = req.params.deptid;
+    const dept = await Department.findOne({deptId : deptId},{_id:0, __v:0});
+    //console.log(dept)
+    var jsondept = JSON.parse(JSON.stringify(dept));
+    const orgId = jsondept["orgId"];
+    console.log(orgId) 
+    const department = await Department.deleteOne({deptId:deptId});
+    const employees = await Employee.deleteMany({deptId:deptId});
+    const organisation = await Organisation.updateMany({orgId:orgId}, { $pull: { dept: deptId } })
+    res.json(orgId);
 };
 
 module.exports = {newDept, getDept, getDeptByDid, getDeptByOid, editDept, removeDept};
