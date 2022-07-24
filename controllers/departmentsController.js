@@ -11,12 +11,9 @@ const newDept = async(req, res)=>{
         dname:dname,
         orgId:orgId,
     });
-     
     const savedDepartment = await newDepartment.save();
     res.json(savedDepartment);
-
     const organisation = await Organisation.updateOne({orgId:orgId},{ $push: { dept: deptId } });
-    
 };
 
 const getDept = async(req, res)=>{
@@ -32,20 +29,25 @@ const getDeptByDid = async(req,res)=>{
 
 const getDeptByOid =  async(req,res)=>{
     const orgId = req.params.orgid;
-    const department = await Department.find({oid: orgId});
+    const department = await Department.find({orgId: orgId});
     res.json(department);
 };
 
 const editDept = async(req,res)=>{
-    const _id = req.params.deptid;
-    const update = await Department.findByIdAndUpdate(_id, {$set:{oid:req.body.oid, dname: req.body.dname, deptId: req.body.deptId}});
+    const deptId = req.params.deptid;
+    const org = await Department.findOne({deptId:deptId})
+    var jsonOrg = JSON.parse(JSON.stringify(org))
+    const orgId = jsonOrg.orgId
+    const update = await Department.updateOne({deptId:deptId}, {$set:{dname:req.body.dname, deptId:req.body.deptId}});
+    const updateemp = await Employee.updateMany({deptId:deptId}, {$set:{deptId:req.body.deptId}})
+    const organisation = await Organisation.updateOne({orgId:orgId}, { $pull: { dept: deptId }})
+    const organisation2 = await Organisation.updateOne({orgId:orgId},{ $push: { dept: req.body.deptId }})
     res.json("Status: Updated");
 };
 
 const removeDept = async(req,res)=>{
     const deptId = req.params.deptid;
     const dept = await Department.findOne({deptId : deptId},{_id:0, __v:0});
-    //console.log(dept)
     var jsondept = JSON.parse(JSON.stringify(dept));
     const orgId = jsondept["orgId"];
     console.log(orgId) 

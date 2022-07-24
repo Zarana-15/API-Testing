@@ -3,24 +3,59 @@ const Department = require("../models/department");
 const Organisation = require("../models/organisation");
 
 const newEmp = async(req, res)=>{
-    const empId = req.body.empId;
+    var lastemp = await Employee.find({}).sort({empId:-1}).limit(1)
+    var jsonemp = JSON.parse(JSON.stringify(lastemp))
+    const empId = jsonemp[0].empId + 1
     const name = req.body.name;
     const age = req.body.age;
-    const email = req.body.email;
     const orgId = req.body.orgId;
     const deptId = req.body.deptId;
-    const joiningDate = req.body.joiningDate;
-    const newEmployee = new Employee({
-        empId:empId,
-        name:name,
-        age:age,
-        email:email,
-        orgId:orgId,
-        deptId:deptId,
-        joiningDate:joiningDate
-    });
-    const savedEmployee = await newEmployee.save();
-    res.json(savedEmployee);
+    var fullname = name.toLowerCase().split(" ");
+    var email = "";
+    var flag = 0;
+    try {
+        var oname = await Organisation.find({orgId:orgId})
+        var jsonorg = JSON.parse(JSON.stringify(oname))
+        const orgName = jsonorg[0].oname
+        //console.log(orgName)
+        email = fullname[0]+"."+fullname[1]+"_"+empId+"@"+orgName.toLowerCase()+".com"
+        //console.log(oname)
+        var dname = await Department.find({orgId:orgId,deptId:deptId})
+        //console.log(dname[0].dname)
+        if(dname[0].dname == "random value") console.log("something's wrong")  
+    }
+    catch(e)
+    {
+        flag = 1;
+        console.log("Errrorrr!"+e)
+        console.log("Department or organisation does not exist.")
+        //res.json("Cannot find Organisation or Department!")
+    }
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    let mm = today.getMonth() + 1; // Months start at 0!
+    let dd = today.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const joiningDate = dd + '/' + mm + '/' + yyyy;
+    if(flag!=1)
+    {
+        const newEmployee = new Employee({
+            name:name,
+            age:age,
+            email:email,
+            empId:empId,
+            orgId:orgId,
+            deptId:deptId,
+            joiningDate:joiningDate
+        });
+        const savedEmployee = await newEmployee.save();
+        res.json(savedEmployee);
+    }
+    else
+    {
+        res.json("Department or Organization does not exist.")
+    }    
 };
 
 const getEmp = async(req, res)=>{
@@ -47,8 +82,8 @@ const getEmpByOid = async(req,res)=>{
 };
 
 const editEmp = async(req,res)=>{
-    const _id = req.params.empid;
-    const update = await Employee.findByIdAndUpdate(_id, {$set:{name:req.body.name,oid:req.body.oid, oname: req.body.oname, did: req.body.did}});
+    const empId = req.params.empid;
+    const update = await Employee.updateOne({empId : empId}, {$set:{name:req.body.name, age: req.body.age}});
     res.json("Status: Updated");
 };
 

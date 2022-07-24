@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const employee = new mongoose.Schema({
     empId:{
-        required: true,
+        //required: true,
         type: Number,
         unique: true
     },
@@ -16,7 +16,7 @@ const employee = new mongoose.Schema({
     },
     email:{
         type: String,
-        required: true
+        //required: true
     },
     orgId:{
         required: true,
@@ -28,7 +28,7 @@ const employee = new mongoose.Schema({
     },
     joiningDate:{
         type: String,
-        required: true
+        //required: true
     }
 });
 

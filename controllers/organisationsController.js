@@ -35,8 +35,10 @@ const getOrgByOrgName = async(req,res)=>{
 };
 
 const editOrg = async(req,res)=>{
-    const _id = req.params.orgid;
-    const update = await Organisation.findByIdAndUpdate(_id, {$set:{oid:req.body.oid, oname: req.body.oname}});
+    const orgId = req.params.orgid;
+    const update = await Organisation.updateOne({orgId:orgId}, {$set:{orgId:req.body.orgId, address:req.body.address}});
+    const updateemp = await Employee.updateMany({orgId:orgId}, {$set:{orgId:req.body.orgId}})
+    const updatedept = await Department.updateMany({orgId:orgId}, {$set:{orgId:req.body.orgId}})
     res.json("Status: Updated");
 };
 
