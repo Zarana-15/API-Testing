@@ -15,4 +15,6 @@ router.patch("/editemp/:empid", EmpController.editEmp);
 
 router.delete("/removeemp/:empid", EmpController.removeEmp);
 
+router.get("/atlassearch/:value", EmpController.atlasSearch);
+
 module.exports = router;

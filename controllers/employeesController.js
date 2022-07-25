@@ -93,4 +93,42 @@ const removeEmp = async(req,res)=>{
     res.json("Status: Deleted");
 };
 
-module.exports = {newEmp, getEmp, getEmpByEid, getEmpByDid, getEmpByOid, editEmp, removeEmp};
+const atlasSearch = async(req, res)=>{
+    const val = req.params.value
+    try {
+        const pipeline = [
+            {
+              '$search': {
+                'index': 'searchEmployee', 
+                'text': {
+                  'query': val, 
+                  'path': ['name', 'deptId', 'orgId', 'joiningDate']
+                }
+              }
+            }, {
+              '$project': {
+                'name': 1,
+                'age':1, 
+                'email':1,
+                'deptId': 1, 
+                'orgId': 1, 
+                'joiningDate':1,
+                '_id': 0, 
+                'score': {
+                  '$meta': 'searchScore'
+                }
+              }
+            }
+          ];
+
+          const aggregateResult = await Employee.aggregate(pipeline);
+          //const aggResArray = await aggregateResult.toArray();
+          res.json(aggregateResult)
+    }
+    catch (e){
+        console.error(`Unable to search: ${e}`)
+        res.json("Unable to Search")
+    }
+}
+
+module.exports = {newEmp, getEmp, getEmpByEid, getEmpByDid, getEmpByOid, editEmp, removeEmp, atlasSearch};

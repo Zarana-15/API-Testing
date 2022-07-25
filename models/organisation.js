@@ -3,14 +3,15 @@ const mongoose = require("mongoose");
 const organisation = new mongoose.Schema({
     orgId:{
         required: true,
-        type: String
+        type: String,
+        unique: true
     },
     oname:{
         required: true,
         type: String
     },
     dept:{
-        required: true,
+        //required: true,
         type: Array
     },
     address:{

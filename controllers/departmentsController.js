@@ -3,17 +3,30 @@ const Employee = require("../models/employee");  //To delete employees when depa
 const Organisation = require("../models/organisation");
 
 const newDept = async(req, res)=>{
-    const deptId = req.body.deptId;
-    const dname = req.body.dname;
-    const orgId = req.body.orgId;
-    const newDepartment = new Department({
-        deptId:deptId,
-        dname:dname,
-        orgId:orgId,
-    });
-    const savedDepartment = await newDepartment.save();
-    res.json(savedDepartment);
-    const organisation = await Organisation.updateOne({orgId:orgId},{ $push: { dept: deptId } });
+    try{
+      const deptId = req.body.deptId;
+      const dname = req.body.dname;
+      const orgId = req.body.orgId;
+      const newDepartment = new Department({
+          deptId:deptId,
+          dname:dname,
+          orgId:orgId,
+      });
+      const org = await Organisation.findOne({orgId:orgId})
+      console.log(org)
+      if(org != null){
+        const savedDepartment = await newDepartment.save();
+        res.json(savedDepartment);
+        const organisation = await Organisation.updateOne({orgId:orgId},{ $push: { dept: deptId } });
+      }
+      else{
+        res.json("Organisation Does not Exist.")
+      }
+      
+    }
+    catch(e){
+      console.error("Cannot add department. "+e)
+  }
 };
 
 const getDept = async(req, res)=>{
@@ -57,4 +70,39 @@ const removeDept = async(req,res)=>{
     res.json(orgId);
 };
 
-module.exports = {newDept, getDept, getDeptByDid, getDeptByOid, editDept, removeDept};
+const atlasSearch = async(req, res)=>{
+    const val = req.params.value
+    try {
+        const pipeline = [
+            {
+              '$search': {
+                'index': 'searchDepartment', 
+                'text': {
+                  'query': val, 
+                  'path': ['dname', 'deptId', 'orgId']
+                }
+              }
+            }, {
+              '$project': {
+                'deptId': 1, 
+                'orgId': 1, 
+                'dname': 1, 
+                '_id': 0, 
+                'score': {
+                  '$meta': 'searchScore'
+                }
+              }
+            }
+          ];
+
+          const aggregateResult = await Department.aggregate(pipeline);
+          //const aggResArray = await aggregateResult.toArray();
+          res.json(aggregateResult)
+    }
+    catch (e){
+        console.error(`Unable to search: ${e}`)
+        res.json("Unable to Search")
+    }
+}
+
+module.exports = {newDept, getDept, getDeptByDid, getDeptByOid, editDept, removeDept, atlasSearch};

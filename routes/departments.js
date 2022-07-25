@@ -13,4 +13,6 @@ router.patch("/editdept/:deptid", DeptController.editDept);
 
 router.delete("/removedept/:deptid", DeptController.removeDept);
 
+router.get("/atlassearch/:value", DeptController.atlasSearch);
+
 module.exports = router;

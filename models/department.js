@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const department = new mongoose.Schema({
     deptId:{
         required: true,
-        type: String
+        type: String,
+        unique: true
     },
     
     orgId:{

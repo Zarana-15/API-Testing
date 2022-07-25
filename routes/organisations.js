@@ -13,4 +13,6 @@ router.patch("/editorg/:orgid", OrgController.editOrg);
 
 router.delete("/removeorg/:orgid", OrgController.removeOrg);
 
+router.get("/atlassearch/:value", OrgController.atlasSearch)
+
 module.exports = router;
