@@ -69,6 +69,12 @@ const getEmpByEid = async(req,res)=>{
     res.json(employee);
 };
 
+const getEmpByName = async(req,res)=>{
+    const ename = req.params.name;
+    const employee = await Employee.find({name: {$regex : ename, $options:"$i" }});
+    res.json(employee);
+}
+
 const getEmpByDid = async(req,res)=>{
     const deptId = req.params.deptid;
     const employee = await Employee.find({deptId: deptId}).sort({empId:1});
@@ -108,7 +114,8 @@ const atlasSearch = async(req, res)=>{
             }, {
               '$project': {
                 'name': 1,
-                'age':1, 
+                'age':1,
+                'empId':1, 
                 'email':1,
                 'deptId': 1, 
                 'orgId': 1, 
@@ -131,4 +138,4 @@ const atlasSearch = async(req, res)=>{
     }
 }
 
-module.exports = {newEmp, getEmp, getEmpByEid, getEmpByDid, getEmpByOid, editEmp, removeEmp, atlasSearch};
+module.exports = {newEmp, getEmp, getEmpByEid, getEmpByName, getEmpByDid, getEmpByOid, editEmp, removeEmp, atlasSearch};

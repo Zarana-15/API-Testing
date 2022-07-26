@@ -7,6 +7,8 @@ router.get("/getemps", EmpController.getEmp);
 
 router.get("/getemp/id/:empid", EmpController.getEmpByEid);
 
+router.get("/getemp/name/:name", EmpController.getEmpByName);
+
 router.get("/getemp/did/:deptid", EmpController.getEmpByDid);
 
 router.get("/getemp/oid/:orgid", EmpController.getEmpByOid);
