@@ -87,6 +87,13 @@ const getEmpByOid = async(req,res)=>{
     res.json(employee);
 };
 
+const getEmpByDidOid = async(req,res)=>{
+    const deptId = req.headers.deptid;
+    const orgId = req.headers.orgid;
+    const employee = await Employee.find({orgId: orgId, deptId:deptId}).sort({empId:1});
+    res.json(employee);
+}
+
 const editEmp = async(req,res)=>{
     const empId = req.params.empid;
     const update = await Employee.updateOne({empId : empId}, {$set:{name:req.body.name, age: req.body.age}});
@@ -108,7 +115,8 @@ const atlasSearch = async(req, res)=>{
                 'index': 'searchEmployee', 
                 'text': {
                   'query': val, 
-                  'path': ['name', 'deptId', 'orgId', 'joiningDate']
+                  //'path': ['name', 'deptId', 'orgId', 'joiningDate']
+                  'path':['name']
                 }
               }
             }, {
@@ -138,4 +146,85 @@ const atlasSearch = async(req, res)=>{
     }
 }
 
-module.exports = {newEmp, getEmp, getEmpByEid, getEmpByName, getEmpByDid, getEmpByOid, editEmp, removeEmp, atlasSearch};
+//Create the index on cluster again. You have deleted
+const atlasSearchDynamic = async(req, res)=>{  
+    const val = req.params.value
+    try {
+        const pipeline = [
+            {
+              '$search': {
+                'index': 'searchEmpDynamic', 
+                'text': {
+                  'query': val, 
+                  //'path': ['name', 'deptId', 'orgId', 'joiningDate']
+                  'path':['orgId']
+                }
+              }
+            }, {
+              '$project': {
+                'name': 1,
+                'age':1,
+                'empId':1, 
+                'email':1,
+                'deptId': 1, 
+                'orgId': 1, 
+                'joiningDate':1,
+                '_id': 0, 
+                'score': {
+                  '$meta': 'searchScore'
+                }
+              }
+            }
+          ];
+
+          const aggregateResult = await Employee.aggregate(pipeline);
+          //const aggResArray = await aggregateResult.toArray();
+          res.json(aggregateResult)
+    }
+    catch (e){
+        console.error(`Unable to search: ${e}`)
+        res.json("Unable to Search")
+    }
+}
+
+const atlasSearchDidOid = async(req, res)=>{  
+    const val = req.headers.value
+    try {
+        const pipeline = [
+            {
+              '$search': {
+                'index': 'searchEmpIndexed', 
+                'text': {
+                  'query': val, 
+                  //'path': ['name', 'deptId', 'orgId', 'joiningDate']
+                  'path':['orgId', 'deptId']
+                }
+              }
+            }, {
+              '$project': {
+                'name': 1,
+                'age':1,
+                'empId':1, 
+                'email':1,
+                'deptId': 1, 
+                'orgId': 1, 
+                'joiningDate':1,
+                '_id': 0, 
+                'score': {
+                  '$meta': 'searchScore'
+                }
+              }
+            }
+          ];
+
+          const aggregateResult = await Employee.aggregate(pipeline);
+          //const aggResArray = await aggregateResult.toArray();
+          res.json(aggregateResult)
+    }
+    catch (e){
+        console.error(`Unable to search: ${e}`)
+        res.json("Unable to Search")
+    }
+}
+
+module.exports = {newEmp, getEmp, getEmpByEid, getEmpByName, getEmpByDid, getEmpByOid, getEmpByDidOid, editEmp, removeEmp, atlasSearch, atlasSearchDynamic, atlasSearchDidOid};

@@ -13,10 +13,16 @@ router.get("/getemp/did/:deptid", EmpController.getEmpByDid);
 
 router.get("/getemp/oid/:orgid", EmpController.getEmpByOid);
 
+router.get("/getemp/didoid/", EmpController.getEmpByDidOid);
+
 router.patch("/editemp/:empid", EmpController.editEmp);
 
 router.delete("/removeemp/:empid", EmpController.removeEmp);
 
 router.get("/atlassearch/:value", EmpController.atlasSearch);
+
+router.get("/atlassearchdynamic/:value", EmpController.atlasSearchDynamic);
+
+router.get("/atlassearchdidoid/", EmpController.atlasSearchDidOid);
 
 module.exports = router;

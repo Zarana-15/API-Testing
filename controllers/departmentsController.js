@@ -79,7 +79,7 @@ const atlasSearch = async(req, res)=>{
                 'index': 'searchDepartment', 
                 'text': {
                   'query': val, 
-                  'path': ['dname', 'deptId', 'orgId']
+                  'path': ['dname']
                 }
               }
             }, {

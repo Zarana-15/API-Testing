@@ -95,7 +95,7 @@ const atlasSearch = async(req, res)=>{
                 'index': 'searchOrganisation', 
                 'text': {
                   'query': val, 
-                  'path': ['oname', 'dept', 'orgId', 'address.line1', 'address.line2', 'address.line3']
+                  'path': ['oname']
                 }
               }
             }, {
@@ -120,5 +120,6 @@ const atlasSearch = async(req, res)=>{
         res.json("Unable to Search")
     }
 }
+
 
 module.exports = {newOrg, getOrg, getOrgByOid, getOrgByOrgName, editOrg, removeOrg, atlasSearch};

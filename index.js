@@ -17,8 +17,10 @@ mongoose
     {useNewUrlParser: true,
     useUnifiedTopology: true,}
     )
-.then(()=> console.log("Connected to DB!"))
+.then(()=> console.log("Connected to DB!"),
+mongoose.set("debug", true))
 .catch((err) => console.log(err));
+
 
 
 app.use("/employees", require("./routes/employees"));
