@@ -29,6 +29,39 @@ const employee = new mongoose.Schema({
     joiningDate:{
         type: String,
         //required: true
+    },
+    searchTags:{
+        type: Array
+    },
+    experience:{
+        type: Number,
+        required : true,
+    },
+    description:{
+        type: String
+    },
+    salary:{
+        type: Number,
+        required: true
+    },
+    address:{
+        type: Object,
+        required: true
+    },
+    notes:{
+        type: Array
+    },
+    skills:{
+        type: Array,
+        required: true
+    },
+    preferredLocations:{
+        type: Array,
+        required:true
+    },
+    ipAddr:{
+        type: Object,
+        required: true
     }
 });
 

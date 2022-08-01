@@ -119,21 +119,14 @@ const atlasSearch = async(req, res)=>{
                   'path':['name']
                 }
               }
-            }, {
-              '$project': {
-                'name': 1,
-                'age':1,
-                'empId':1, 
-                'email':1,
-                'deptId': 1, 
-                'orgId': 1, 
-                'joiningDate':1,
-                '_id': 0, 
-                'score': {
-                  '$meta': 'searchScore'
-                }
-              }
-            }
+            // }, {
+            //   '$project': {
+            //     '_id': 0, 
+            //     'score': {
+            //       '$meta': 'searchScore'
+            //     }
+            //   }
+             }
           ];
 
           const aggregateResult = await Employee.aggregate(pipeline);
