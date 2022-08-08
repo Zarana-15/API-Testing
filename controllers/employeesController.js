@@ -75,6 +75,22 @@ const getEmpByName = async(req,res)=>{
     res.json(employee);
 }
 
+const getEmpByLoc = async(req, res) => {
+  const location = req.params.location;
+  const employee = await Employee.find({'preferredLocations': {$regex: location, $options: '$i'}})
+  res.json(employee);
+}
+
+const newQuery = async(req, res) => {
+  const value = req.params.value;
+  const employee = await Employee.find({$or : [  
+    {'name': {$regex: value, $options:"$i" }},
+    {'preferredLocations': value},
+    {'skills': value}       
+    ]});
+  res.json(employee);
+}
+
 const getEmpByDid = async(req,res)=>{
     const deptId = req.params.deptid;
     const employee = await Employee.find({deptId: deptId}).sort({empId:1});
@@ -116,16 +132,9 @@ const atlasSearch = async(req, res)=>{
                 'text': {
                   'query': val, 
                   //'path': ['name', 'deptId', 'orgId', 'joiningDate']
-                  'path':['name']
+                  'path':['name', 'skills', 'preferredLocations']
                 }
               }
-            // }, {
-            //   '$project': {
-            //     '_id': 0, 
-            //     'score': {
-            //       '$meta': 'searchScore'
-            //     }
-            //   }
              }
           ];
 
@@ -140,31 +149,17 @@ const atlasSearch = async(req, res)=>{
 }
 
 //Create the index on cluster again. You have deleted
-const atlasSearchDynamic = async(req, res)=>{  
+const atlasSearchName = async(req, res)=>{  
     const val = req.params.value
     try {
         const pipeline = [
             {
               '$search': {
-                'index': 'searchEmpDynamic', 
+                'index': 'searchEmpName', 
                 'text': {
                   'query': val, 
                   //'path': ['name', 'deptId', 'orgId', 'joiningDate']
-                  'path':['orgId']
-                }
-              }
-            }, {
-              '$project': {
-                'name': 1,
-                'age':1,
-                'empId':1, 
-                'email':1,
-                'deptId': 1, 
-                'orgId': 1, 
-                'joiningDate':1,
-                '_id': 0, 
-                'score': {
-                  '$meta': 'searchScore'
+                  'path':['name']
                 }
               }
             }
@@ -180,33 +175,19 @@ const atlasSearchDynamic = async(req, res)=>{
     }
 }
 
-const atlasSearchDidOid = async(req, res)=>{  
+const atlasSearchLoc = async(req, res)=>{  
     const val = req.headers.value
     try {
         const pipeline = [
             {
               '$search': {
-                'index': 'searchEmpIndexed', 
+                'index': 'searchEmpLoc', 
                 'text': {
                   'query': val, 
                   //'path': ['name', 'deptId', 'orgId', 'joiningDate']
-                  'path':['orgId', 'deptId']
+                  'path':['preferredLocations']
                 }
-              }
-            }, {
-              '$project': {
-                'name': 1,
-                'age':1,
-                'empId':1, 
-                'email':1,
-                'deptId': 1, 
-                'orgId': 1, 
-                'joiningDate':1,
-                '_id': 0, 
-                'score': {
-                  '$meta': 'searchScore'
-                }
-              }
+              } 
             }
           ];
 
@@ -220,4 +201,4 @@ const atlasSearchDidOid = async(req, res)=>{
     }
 }
 
-module.exports = {newEmp, getEmp, getEmpByEid, getEmpByName, getEmpByDid, getEmpByOid, getEmpByDidOid, editEmp, removeEmp, atlasSearch, atlasSearchDynamic, atlasSearchDidOid};
+module.exports = {newEmp, getEmp, getEmpByEid, getEmpByName, getEmpByLoc, getEmpByDid, getEmpByOid, getEmpByDidOid, editEmp, removeEmp, atlasSearch, atlasSearchName, atlasSearchLoc, newQuery};

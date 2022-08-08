@@ -9,6 +9,8 @@ router.get("/getemp/id/:empid", EmpController.getEmpByEid);
 
 router.get("/getemp/name/:name", EmpController.getEmpByName);
 
+router.get("/getemp/location/:location", EmpController.getEmpByLoc);
+
 router.get("/getemp/did/:deptid", EmpController.getEmpByDid);
 
 router.get("/getemp/oid/:orgid", EmpController.getEmpByOid);
@@ -21,8 +23,10 @@ router.delete("/removeemp/:empid", EmpController.removeEmp);
 
 router.get("/atlassearch/:value", EmpController.atlasSearch);
 
-router.get("/atlassearchdynamic/:value", EmpController.atlasSearchDynamic);
+router.get("/atlassearchname/:value", EmpController.atlasSearchName);
 
-router.get("/atlassearchdidoid/", EmpController.atlasSearchDidOid);
+router.get("/atlassearchloc/", EmpController.atlasSearchLoc);
+
+router.get("/newquery/:value", EmpController.newQuery);
 
 module.exports = router;
